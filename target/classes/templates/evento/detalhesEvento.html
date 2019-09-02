@@ -52,6 +52,7 @@ RG: <input type="text" value="" name="rg"/>
         <tr>
             <th>Nome Convidado</th>
             <th>RG</th>
+            <th>Deletar</th>
         </tr>
     </thead>
     <tbody>
@@ -59,6 +60,7 @@ RG: <input type="text" value="" name="rg"/>
 
             <td><span th:text="${convidado.nomeConvidado}"></span></td>
             <td><span th:text="${convidado.rg}"></span></td>
+            <td><a class="waves-effect waves-light btn-small" th:href="${(#mvc.url('EC#deletarConvidado').arg(0, convidado.rg)).build()}"></a><i class="material-icons left">delete</i></td>
         </tr>
     </tbody>
 </table>
