@@ -1,9 +1,18 @@
 package com.app.evento.controllers;
 
+import java.util.Collection;
+import java.util.List;
+
 import javax.validation.Valid;
 
+import org.json.HTTP;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.MultiValueMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -37,28 +46,60 @@ public class EventoController {
 		er.save(evento);
 		return "redirect:/cadastrarEvento";
 	}
-	
+
+
+
+
+
 	@RequestMapping("/eventos")
-	public ModelAndView listaEventos() {
-		ModelAndView mv = new ModelAndView("index");
-		Iterable<Evento> eventos = er.findAll();
-		mv.addObject("eventos", eventos);
-		return mv;
-		 
+	public ResponseEntity<Collection<Evento>> listaEventos() {
+		return new ResponseEntity<>(er.findAll(), HttpStatus.OK);
 	}
+
+
 	
 	
 	
-	@RequestMapping(value="/{codigo}", method=RequestMethod.GET)
-	public ModelAndView detalhesEvento(@PathVariable("codigo") long codigo){
-		Evento evento = er.findByCodigo(codigo);
-		ModelAndView mv = new ModelAndView("evento/detalhesEvento");
-		mv.addObject("evento", evento);
-		Iterable<Convidado> convidados = cr.findByEvento(evento);
-		mv.addObject("convidados", convidados);
-		return mv;
-		
+	
+	/*
+	 * @RequestMapping(value="/{codigo}", method=RequestMethod.GET) public
+	 * ModelAndView detalhesEvento(@PathVariable("codigo") long codigo){ Evento
+	 * evento = er.findByCodigo(codigo); 
+	 * ModelAndView mv = new ModelAndView("evento/detalhesEvento"); mv.addObject("evento", evento);
+	 * Iterable<Convidado> convidados = cr.findByEvento(evento);
+	 * mv.addObject("convidados", convidados); return mv;
+	 * 
+	 * }
+	 */
+	
+	
+	
+	@RequestMapping(value = "/{codigo}", method = RequestMethod.GET)
+	public ResponseEntity<Evento> detalhesEvento(@PathVariable long codigo) {
+		if (er.findByCodigo(codigo) != null) {
+			Evento evento = er.findByCodigo(codigo);
+			Iterable<Convidado> convidados = cr.findByEvento(evento);
+			
+			evento = (Evento) convidados;
+			JSONObject json = new JSONObject();
+			JSONArray jsonArr = new JSONArray();
+			json.put("evento", evento);
+			json.put("convidados", convidados);
+			jsonArr.put(json);
+			//return new ResponseEntity<Evento>((evento), (MultiValueMap<String, String>) convidados, HttpStatus.OK);
+			
+			return new ResponseEntity<Evento>(evento,HttpStatus.OK);
+			//return new ResponseEntity<>(jsonArr, HttpStatus.OK);
+		} else {
+			return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+		}
 	}
+
+
+
+
+	
+	
 	
 	@RequestMapping("/deletarEvento")
 	public String deletarEvento(long codigo) {
