@@ -1,14 +1,18 @@
 package com.app.evento.controllers;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
 import javax.validation.Valid;
+import javax.xml.ws.Response;
 
 import org.json.HTTP;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.security.SecurityProperties.User;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -73,25 +77,36 @@ public class EventoController {
 	 */
 	
 	
+	/*
+	 * @RequestMapping(value="/{codigo}", method=RequestMethod.GET) public
+	 * ModelAndView detalhesEvento(@PathVariable("codigo") long codigo){ 
+	 * Evento evento = er.findByCodigo(codigo); ModelAndView mv = new
+	 * ModelAndView("evento/detalhesEvento"); mv.addObject("evento", evento);
+	 * Iterable<Convidado> convidados = cr.findByEvento(evento);
+	 * mv.addObject("convidados", convidados); return mv;
+	 * 
+	 * }
+	 */
+	
+
 	
 	@RequestMapping(value = "/{codigo}", method = RequestMethod.GET)
 	public ResponseEntity<Evento> detalhesEvento(@PathVariable long codigo) {
 		if (er.findByCodigo(codigo) != null) {
 			Evento evento = er.findByCodigo(codigo);
-			Iterable<Convidado> convidados = cr.findByEvento(evento);
+
+			ModelAndView mv = new ModelAndView();
+			//Iterable<Convidado> convidados = cr.findByEvento(evento);
+			Evento List <Convidado> convidados1;
+		
+			 ArrayList<Evento> conv = new ArrayList();
+			 conv = cr.findByEvento(evento);
 			
-			evento = (Evento) convidados;
-			JSONObject json = new JSONObject();
-			JSONArray jsonArr = new JSONArray();
-			json.put("evento", evento);
-			json.put("convidados", convidados);
-			jsonArr.put(json);
-			//return new ResponseEntity<Evento>((evento), (MultiValueMap<String, String>) convidados, HttpStatus.OK);
+			return new ResponseEntity<Evento>(evento, HttpStatus.OK);
 			
-			return new ResponseEntity<Evento>(evento,HttpStatus.OK);
-			//return new ResponseEntity<>(jsonArr, HttpStatus.OK);
 		} else {
 			return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+			
 		}
 	}
 
