@@ -26,6 +26,14 @@ public class Evento implements Serializable{
 	@OneToMany
 	private List<Convidado> convidados;
 	
+	public List<Convidado> getConvidados() {
+		return convidados;
+	}
+
+	public void setConvidados(List<Convidado> convidados) {
+		this.convidados = convidados;
+	}
+
 	public Evento() {
 		
 	}

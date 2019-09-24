@@ -38,11 +38,11 @@ public class EventoController {
 	@Autowired
 	private ConvidadoRepository cr;
 
-	@RequestMapping(value = "/cadastrarEvento", method = RequestMethod.GET)
-	public String form() {
+	//@RequestMapping(value = "/cadastrarEvento", method = RequestMethod.GET)
+	//public String form() {
 
-		return "evento/formEvento";
-	}
+		//return "evento/formEvento";
+	//}
 	
 	@RequestMapping(value = "/cadastrarEvento", method = RequestMethod.POST)
 	public String form(Evento evento) {
@@ -94,14 +94,11 @@ public class EventoController {
 	public ResponseEntity<Evento> detalhesEvento(@PathVariable long codigo) {
 		if (er.findByCodigo(codigo) != null) {
 			Evento evento = er.findByCodigo(codigo);
+			List<Convidado> convidados = cr.findByEvento(evento);
+			evento.setConvidados(convidados);
 
-			ModelAndView mv = new ModelAndView();
-			//Iterable<Convidado> convidados = cr.findByEvento(evento);
-			Evento List <Convidado> convidados1;
 		
-			 ArrayList<Evento> conv = new ArrayList();
-			 conv = cr.findByEvento(evento);
-			
+	
 			return new ResponseEntity<Evento>(evento, HttpStatus.OK);
 			
 		} else {
@@ -111,11 +108,6 @@ public class EventoController {
 	}
 
 
-
-
-	
-	
-	
 	@RequestMapping("/deletarEvento")
 	public String deletarEvento(long codigo) {
 		Evento evento = er.findByCodigo(codigo);
